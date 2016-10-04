@@ -45,6 +45,7 @@
       "zone": "europe-west1-b",
       "ssh_username": "centos",
       "ssh_pty": "true",
+      "startup_script_file": "gce-startup-test.sh",
       "image_name": "packer-demo-{{timestamp}}"
     }
   ],
@@ -52,7 +53,9 @@
     {
       "type": "shell",
       "execute_command": "{{.Vars}} /bin/sh -x '{{.Path}}'",
-      "script": "scripts/cloud/puppet_install.sh"
+      "scripts": [
+        "scripts/cloud/puppet_install.sh"
+      ]
     }
   ]
 }
