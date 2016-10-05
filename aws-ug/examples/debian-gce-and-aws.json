@@ -1,0 +1,39 @@
+{
+  "variables": {
+    "aws_source_ami": "ami-11c57862",
+    "gce_proj": "packer-test-141600",
+    "gce_source_image": "debian-8-jessie-v20160923"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "eu-west-1",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "instance_type": "t2.micro",
+      "ssh_username": "admin",
+      "ssh_pty": "true",
+      "ami_name": "packer-demo-debian-{{timestamp}}",
+      "tags": {
+        "OS_Version": "CentOS",
+        "Release": "Latest"
+      }
+    },
+    {
+      "type": "googlecompute",
+      "project_id": "{{ user `gce_proj` }}",
+      "source_image": "{{ user `gce_source_image` }}",
+      "zone": "europe-west1-b",
+      "ssh_username": "debian",
+      "ssh_pty": "true",
+      "image_name": "packer-demo-debian-{{timestamp}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "grep PRETTY_NAME /etc/os-release  | cut -d= -f2 | tr -d \\\""
+      ]
+    }
+  ]
+}

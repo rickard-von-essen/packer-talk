@@ -1,0 +1,12 @@
+{
+  "builders": [{
+    "type": "amazon-chroot",
+    "source_ami": "ami-d41d58a7",
+    "ami_name": "packer-amazon-chroot {{timestamp}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [ "echo Hi > /tmp/hi && ls /" ]
+  }]
+}
+
