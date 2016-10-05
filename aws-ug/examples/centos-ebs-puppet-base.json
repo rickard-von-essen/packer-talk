@@ -1,0 +1,42 @@
+{
+  "variables": {
+    "aws_source_ami": "ami-7abd0209"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "eu-west-1",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "instance_type": "m4.large",
+      "ssh_username": "centos",
+      "ssh_pty": "true",
+      "ami_name": "packer-demo-centos-7-puppet-{{timestamp}}",
+      "tags": {
+        "OS_Version": "CentOS",
+        "Release": "7"
+      }
+    },
+    {
+      "type": "docker",
+      "discard": true,
+      "image": "centos:7"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": "yum install -y sudo && echo 'Defaults !requiretty' >> /etc/sudoers",
+      "only": [ "docker" ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "{{.Vars}} sudo /bin/sh -x '{{.Path}}'",
+      "script": "scripts/puppet_install.sh"
+    },
+    {
+      "type": "puppet-masterless",
+      "manifest_file": "puppet/ecs_node.pp",
+      "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}}{{if .Sudo}} sudo -E {{end}}/opt/puppetlabs/bin/puppet apply --verbose --modulepath='{{.ModulePath}}' {{if ne .HieraConfigPath \"\"}}--hiera_config='{{.HieraConfigPath}}' {{end}} {{if ne .ManifestDir \"\"}}--manifestdir='{{.ManifestDir}}' {{end}} --detailed-exitcodes {{.ManifestFile}}"
+    }
+  ]
+}
