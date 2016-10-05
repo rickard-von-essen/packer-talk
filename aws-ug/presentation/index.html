@@ -75,7 +75,36 @@
           <section data-background="images/07-8_EBS_Instance_Store.jpg" data-background-size="1200px" data-background-transition="none"></section>
           <section data-background="images/07-9_EBS_Instance_Store.jpg" data-background-size="1200px" data-background-transition="none"></section>
         </section>
-        <section><h1>Demo</h1></section>
+        <section>
+          <h1>Demo</h1>
+          <pre><code class="json" data-trim>
+{
+  "variables": {
+    "aws_source_ami": "ami-7abd0209"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "eu-west-1",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "instance_type": "m4.large",
+      "ssh_username": "centos",
+      "ssh_pty": "true",
+      "ami_name": "packer-demo-centos-7-puppet-{{timestamp}}",
+      "tags": {
+        "OS_Version": "CentOS",
+        "Release": "7"
+      }
+    },
+    {
+      "type": "docker",
+      "discard": true,
+      "image": "centos:7"
+    }
+  ]
+}
+          </code></pre>
+        </section>
         <section>
           <section data-background="images/08-2_Chroot.jpg" data-background-size="1200px" data-background-transition="none"></section>
           <section data-background="images/08-3_Chroot.jpg" data-background-size="1200px" data-background-transition="none"></section>
@@ -86,7 +115,23 @@
           <section data-background="images/08-8_Chroot.jpg" data-background-size="1200px" data-background-transition="none"></section>
           <section data-background="images/08-9_Chroot.jpg" data-background-size="1200px" data-background-transition="none"></section>
         </section>
-        <section><h1>Demo</h1></section>
+        <section>
+          <h1>Demo</h1>
+          <pre><code class="json" data-trim>
+{
+  "builders": [{
+    "type": "amazon-chroot",
+    "source_ami": "ami-d41d58a7",
+    "ami_name": "packer-amazon-chroot {{timestamp}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [ "echo Hi > /tmp/hi && ls /" ]
+  }]
+}
+          </code></pre>
+        </section>
+
         <section>
           <section data-background="images/09-1_Links.jpg" data-background-size="1200px" data-background-transition="none"></section>
           <section data-background="images/09-2_Links.jpg" data-background-size="1200px" data-background-transition="none"></section>
