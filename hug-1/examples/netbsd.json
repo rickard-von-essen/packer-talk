@@ -1,0 +1,182 @@
+{
+  "_comment": "Build with `packer build netbsd70.json`",
+  "builders": [
+    {
+      "boot_command": [
+        "4<wait>",
+        "boot -s<enter>",
+        "<wait10><wait5>",
+        "/bin/sh<enter><wait>",
+        "mount -t tmpfs /dev/wd0b /tmp<enter><wait>",
+        "mkdir /tmp/etc /tmp/var<enter>",
+        "echo '' > /tmp/etc/resolv.conf<enter>",
+        "mount -t union /tmp/etc /etc<enter>",
+        "mount -t union /tmp/var /var<enter>",
+        "dhclient -lf /tmp/dhclient.lease.wm0 wm0<enter><wait5>",
+        "ftp -o /tmp/autoinst.sh http://{{ .HTTPIP }}:{{ .HTTPPort }}/netbsd70-autoinst.sh && chmod a+x /tmp/autoinst.sh",
+        " && /tmp/autoinst.sh -s 2048 -h netbsd70 wd0 && reboot<enter>"
+      ],
+      "boot_wait": "6s",
+      "disk_size": "{{ user `disk_size` }}",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "NetBSD_64",
+      "hard_drive_interface": "sata",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "sha256",
+      "iso_urls": [
+        "{{ user `iso_path` }}/{{ user `iso_name` }}",
+        "{{ user `iso_url` }}"
+      ],
+      "output_directory": "output-netbsd70-virtualbox-iso",
+      "shutdown_command": "sudo /sbin/shutdown -p now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm", "{{.Name}}", "--memory", "{{ user `memory` }}"
+        ],
+        [
+          "modifyvm", "{{.Name}}", "--cpus", "{{ user `cpus` }}"
+        ]
+      ],
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "netbsd70"
+    },
+    {
+      "boot_command": [
+        "4<wait>",
+        "boot -s<enter>",
+        "<wait10><wait5>",
+        "/bin/sh<enter><wait>",
+        "mount -t tmpfs /dev/wd0b /tmp<enter><wait>",
+        "mkdir /tmp/etc /tmp/var<enter>",
+        "echo '' > /tmp/etc/resolv.conf<enter>",
+        "mount -t union /tmp/etc /etc<enter>",
+        "mount -t union /tmp/var /var<enter>",
+        "dhclient -lf /tmp/dhclient.lease.wm0 wm0<enter><wait5>",
+        "ftp -o /tmp/autoinst.sh http://{{ .HTTPIP }}:{{ .HTTPPort }}/netbsd70-autoinst.sh",
+        " && chmod a+x /tmp/autoinst.sh && /tmp/autoinst.sh -s 2048 -h netbsd70 sd0 && reboot<enter>"
+      ],
+      "boot_wait": "6s",
+      "disk_size": "{{ user `disk_size` }}",
+      "guest_os_type": "freebsd-64",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "sha256",
+      "iso_urls": [
+        "{{ user `iso_path` }}/{{ user `iso_name` }}",
+        "{{ user `iso_url` }}"
+      ],
+      "output_directory": "output-netbsd70-vmware-iso",
+      "shutdown_command": "sudo /sbin/shutdown -p now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "tools_upload_flavor": "",
+      "type": "vmware-iso",
+      "vm_name": "netbsd70",
+      "vmx_data": {
+        "memsize": "{{ user `memory` }}",
+        "numvcpus": "{{ user `cpus` }}"
+      }
+    },
+    {
+      "boot_command": [
+        "4<wait>",
+        "boot -s<enter>",
+        "<wait10><wait5>",
+        "/bin/sh<enter><wait>",
+        "mount -t tmpfs /dev/wd0b /tmp<enter><wait>",
+        "mkdir /tmp/etc /tmp/var<enter>",
+        "echo '' > /tmp/etc/resolv.conf<enter>",
+        "mount -t union /tmp/etc /etc<enter>",
+        "mount -t union /tmp/var /var<enter>",
+        "dhclient -lf /tmp/dhclient.lease.wm0 wm0<enter><wait5>",
+        "ftp -o /tmp/autoinst.sh http://{{ .HTTPIP }}:{{ .HTTPPort }}/netbsd70-autoinst.sh && chmod a+x /tmp/autoinst.sh",
+        " && /tmp/autoinst.sh -s 2048 -h netbsd70 wd0 && reboot<enter>"
+      ],
+      "boot_wait": "6s",
+      "disk_size": "{{ user `disk_size` }}",
+      "guest_os_type": "freebsd",
+      "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "sha256",
+      "iso_urls": [
+        "{{ user `iso_path` }}/{{ user `iso_name` }}",
+        "{{ user `iso_url` }}"
+      ],
+      "output_directory": "output-netbsd70-parallels-iso",
+      "parallels_tools_mode": "disable",
+      "prlctl": [
+        [
+          "set", "{{.Name}}", "--memsize", "{{ user `memory` }}"
+        ],
+        [
+          "set", "{{.Name}}", "--cpus", "{{ user `cpus` }}"
+        ],
+        [
+          "set", "{{.Name}}", "--device-set", "cdrom0", "--iface", "ide"
+        ],
+        [
+          "set", "{{.Name}}", "--device-del", "fdd0"
+        ],
+        [
+          "set", "{{.Name}}", "--device-del", "parallel0"
+        ]
+      ],
+      "prlctl_version_file": ".prlctl_version",
+      "shutdown_command": "sudo /sbin/shutdown -p now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "type": "parallels-iso",
+      "vm_name": "netbsd70"
+    }
+  ],
+  "post-processors": [
+    {
+      "keep_input_artifact": false,
+      "output": "boxes/{{.Provider}}-netbsd70.box",
+      "type": "vagrant",
+      "vagrantfile_template": "netbsd-vagrant.rb"
+    }
+  ],
+  "provisioners": [
+    {
+      "environment_vars": [
+        "NETBSD_MIRROR={{user `netbsd_mirror`}}",
+        "INSTALL_VAGRANT_KEY=true",
+        "SSH_USERNAME={{user `ssh_username`}}",
+        "SSH_PASSWORD={{user `ssh_password`}}"
+      ],
+      "execute_command": "{{.Vars}} sudo -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/netbsd/setup_pkg.sh",
+        "scripts/netbsd/postinstall.sh",
+        "scripts/netbsd/vagrant.sh",
+        "scripts/netbsd/vmware.sh",
+        "scripts/netbsd/virtualbox.sh",
+        "scripts/netbsd/parallels.sh",
+        "scripts/netbsd/motd.sh",
+        "scripts/netbsd/cleanup.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "cpus": "1",
+    "disk_size": "65536",
+    "headless": "",
+    "iso_checksum": "31a1336bc0b997d00db6fc41c10b4e97115246a92d850b97b033250a29dd5348",
+    "iso_name": "NetBSD-7.0.2-amd64.iso",
+    "iso_path": "{{ env `HOME` }}/Downloads",
+    "iso_url": "http://ftp.fi.netbsd.org/pub/NetBSD/NetBSD-7.0.2/iso/NetBSD-7.0.2-amd64.iso",
+    "netbsd_mirror": "http://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD",
+    "memory": "512"
+  }
+}
